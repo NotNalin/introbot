@@ -8,7 +8,6 @@ from logging.handlers import RotatingFileHandler
 import click
 import discord
 from decouple import config
-
 from bot import CustomBot
 
 log_path = (config("LOG_PATH", cast=str))
