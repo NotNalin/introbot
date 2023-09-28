@@ -9,13 +9,13 @@ from discord.utils import get
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import asyncio
+from decouple import config
 
 
 def return_names(list_of_enums):
     return [name.value for name in list_of_enums]
 
-class Channels(Enum):
-    TASK_DROPBOX = 'https://discord.com/channels/771670169691881483/782353185552465951'
+TASK_DROPBOX = config('TASK_DROPBOX')
 
 class Role(Enum):
     ADMIN = "Admins"
@@ -118,7 +118,7 @@ class IntroCog(Cog):
                     return
             if order == 15:
                 await message.channel.send("You will recieve your certificate in dm")
-                await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {Channels.TASK_DROPBOX.value} channel with the hashtag **#ge-intro-to-discord** to avail 100 karma points')
+                await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {TASK_DROPBOX} channel with the hashtag **#ge-intro-to-discord** to avail 100 karma points')
                 await self.award_certificate(message)
                 self.intro_queries.delete_log(message.author.id)
                 await message.channel.delete()
