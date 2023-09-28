@@ -1,0 +1,13 @@
+.DS_Store
+media/
+logs/
+
+.README.md
+.git
+.gitignore
+.env
+.venv
+env/
+venv/
+.vscode
+.idea

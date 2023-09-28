@@ -1,0 +1,13 @@
+version: '3'
+services:
+  introbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: introbot
+    image: introbot
+    restart: always
+    volumes:
+      - /var/log/introbot:/var/log/introbot
+    env_file:
+      - .env
