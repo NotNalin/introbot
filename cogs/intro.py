@@ -146,7 +146,10 @@ class IntroCog(Cog):
                 await message.channel.send("NB: Please return back to intro channel")
             elif order == 10:
                 lobby_messagge_id = self.intro_queries.fetch_lobby_message_id(message.author.id)
-                lobby_message = await message.channel.fetch_message(lobby_messagge_id)
+                for channel in message.guild.channels:
+                    if channel.name == 'karma-alerts':
+                        break
+                lobby_message = await channel.fetch_message(lobby_messagge_id)
                 await message.channel.send(step[order].replace("message_id", lobby_message.jump_url))
             else :
                 await message.channel.send(step[order])
