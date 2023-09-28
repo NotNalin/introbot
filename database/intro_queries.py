@@ -137,3 +137,17 @@ class IntroQueries:
             'hashtag': '#my-muid'
         }
         return self.db_connection.fetch_single_data(query, params)
+
+    def fetch_lobby_message_id(self, discord_id):
+        query = """
+            SELECT lobby_message_id 
+            FROM karma_activity_log 
+            WHERE user_id = (SELECT id FROM user WHERE discord_id = :discord_id) 
+            AND task_id = (SELECT id FROM task_list WHERE hashtag = :hashtag)
+            AND peer_approved = TRUE;
+        """
+        params = {
+            'discord_id': str(discord_id),
+            'hashtag': '#my-muid'
+        }
+        return self.db_connection.fetch_single_data(query, params)

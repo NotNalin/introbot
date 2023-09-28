@@ -14,6 +14,8 @@ import asyncio
 def return_names(list_of_enums):
     return [name.value for name in list_of_enums]
 
+class Channels(Enum):
+    TASK_DROPBOX = 'https://discord.com/channels/771670169691881483/782353185552465951'
 
 class Role(Enum):
     ADMIN = "Admins"
@@ -38,7 +40,7 @@ step = {
     7: "Karma Point is a digital score system implemented at μLearn. Each task is associated with a specific amount of Karma Points that can be earned once the proof of completion of that task has been submitted 🪙Buckle up and mine Karma Points and climb all the way up the leaderboard! Here is a task for you\n\nMy Muid\n Post your muid with the hashtag '#my-muid' in this channel\nEg: #my-muid ousu@mulearn",
     8: "μLearn follows a peer approval system, which means all tasks submitted by you are reviewed by none other than your peers!\nThe reviewers are specially assigned for this role and their task is to flag your proof of work according to its validity.\n• 🚩 - A red flag means your task is ineligible to get Karma points due to some reason.\n• 🏁 - A checkered flag means your task is eligible and Karma Points will be awarded shortly.\nSo next time you submit a task, pay heed to its peer approval status and do rectify errors if any 😇",
     9: "Once you've submitted a task and your proof of work has been reviewed, the next step is awarding of Karma Points!\n• ✅ - A green tick box means your task has been awarded Karma Points.\nAll tasks that have been appraised as shown above are automatically rewarded Karma Points ✨",
-    10: "Once your task has been verified and rewarded Karma Points, you'll be notified about the same in your Discord DM by our bot 💫\nmention_channel can be used to keep track of all the tasks for which you've earned Karma Points systematically!",
+    10: "Once your task has been verified and rewarded Karma Points, you'll be notified about the same in your Discord DM by our bot 💫\nmessage_id can be used to keep track of all the tasks for which you've earned Karma Points systematically!",
     11: "What if I said you can earn Karma points just by chatting? μLearn now awards you Chat Karma for connecting with your peers in the respective text channel 🥳\nMaintain your streak and walk away with a daily bundle of Karma Points just by chatting!",
     12: "Who does not like a bit a competition amongst their peers? Your Rank tells you how far you're ahead of your peers. Maximize your Karma mining and don't let the others topple you on your way to the leaderboard 🔥\nVisit the mention_channel channel and use the /rank command to see where you stand among your fellow learners!",
     13: "Have any doubts regarding the task? Were your Karma Points not allotted properly? Is there any error in your rank? Facing any further other issue at μLearn Discord server? Worry not! We're always here to help 😌\nAll you got to do is raise a support ticket using the command /support-ticket in any of our text channels and our moderators will be in touch shortly to resolve all your current issues!",
@@ -116,7 +118,7 @@ class IntroCog(Cog):
                     return
             if order == 15:
                 await message.channel.send("You will recieve your certificate in dm")
-                await message.author.send("You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in mention_channel channel with the hashtag **#ge-intro-to-discord** to avail 100 karma points")
+                await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {Channels.TASK_DROPBOX.value} channel with the hashtag **#ge-intro-to-discord** to avail 100 karma points')
                 await self.award_certificate(message)
                 self.intro_queries.delete_log(message.author.id)
                 await message.channel.delete()
@@ -134,8 +136,6 @@ class IntroCog(Cog):
                 mention_channel_name = "lvl1-info"
             elif order == 6:
                 mention_channel_name = "self-introduction"
-            elif order == 10:
-                mention_channel_name = "karma-alert"
             elif order == 12:
                 mention_channel_name = "know-your-rank"
             if mention_channel_name:
@@ -144,6 +144,10 @@ class IntroCog(Cog):
                         break
                 await message.channel.send(step[order].replace("mention_channel", channel.mention))
                 await message.channel.send("NB: Please return back to intro channel")
+            elif order == 10:
+                lobby_messagge_id = self.intro_queries.fetch_lobby_message_id(message.author.id)
+                lobby_message = await message.channel.fetch_message(lobby_messagge_id)
+                await message.channel.send(step[order].replace("message_id", lobby_message.jump_url))
             else :
                 await message.channel.send(step[order])
             self.intro_queries.update_progress(message.author.id, order + 1)
