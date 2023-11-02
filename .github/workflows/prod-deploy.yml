@@ -18,11 +18,11 @@ jobs:
     - name: Configure SSH key
       uses: webfactory/ssh-agent@v0.4.1
       with:
-        ssh-private-key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+        ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
 
     - name: Deploy
       env:
-        REMOTE_IP: ${{ secrets.PROD_REMOTE_IP }}
+        REMOTE_IP: ${{ secrets.BOT_REMOTE_IP }}
         PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@$REMOTE_IP "cd $PROJECT_PATH && git pull && docker-compose up --build -d"
