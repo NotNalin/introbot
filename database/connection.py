@@ -11,7 +11,7 @@ class DBConnection:
     def __init__(self, pool_size=5, max_overflow=10):
         db_host = config("DATABASE_HOST")
         db_user = config("DATABASE_USER")
-        db_pass = quote_plus(config("DATABASE_PASS"))
+        db_pass = quote_plus(config("DATABASE_PASSWORD"))
         db_name = config("DATABASE_NAME")
         db_port = config("DATABASE_PORT", cast=int)
         self.db_engine = create_engine(
