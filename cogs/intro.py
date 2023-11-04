@@ -30,23 +30,22 @@ class Role(Enum):
 
 
 step = {
-    0: "Hey user,\nWelcome to the \"Intro to Discord\" task. Are you ready to explore our Discord server?",
-    1: "I hope your onboarding process went smoothly. Our mention_channel channel is where we extend a warm welcome to new members of our community. There's actually a special greeting card waiting for you in that very channel. Feel free to take a moment and check it out!",
-    2: "Please take a moment to visit our rules and readme in mention_channel channel, and kindly adhere to our straightforward guidelines to become a valued member of our community.",
-    3: "Keen to follow up the activities of μLearn? We've compiled the schedules of all our current and upcoming events just for you 📣\nHead on to the mention_channel channel for all our updates!",
-    4: "Ever thought of acquiring a job through μLearn? You'll be glad to know that not just students, even companies onboard GTech μLearn in search of talent 💫\nVisit mention_channel to keep track of announcements and opportunities from our partner companies.",
-    5: "Tasks are allotted according to your current level in the μLearn Discord server. Visit the channel corresponding to your current level to know more about the tasks and their corresponding Karma Points ✨",
-    6: "Hello µLearner! Great to have you onboard. Eager to know about your peers? Start by posting an introduction about yourself 🙋\nHead on to mention_channel channel to meet your peers and introduce yourself to them!",
-    7: "Karma Point is a digital score system implemented at μLearn. Each task is associated with a specific amount of Karma Points that can be earned once the proof of completion of that task has been submitted 🪙Buckle up and mine Karma Points and climb all the way up the leaderboard! Here is a task for you\n\nMy Muid\n Post your muid with the hashtag '#my-muid' in this channel\nEg: #my-muid ousu@mulearn",
-    8: "μLearn follows a peer approval system, which means all tasks submitted by you are reviewed by none other than your peers!\nThe reviewers are specially assigned for this role and their task is to flag your proof of work according to its validity.\n• 🚩 - A red flag means your task is ineligible to get Karma points due to some reason.\n• 🏁 - A checkered flag means your task is eligible and Karma Points will be awarded shortly.\nSo next time you submit a task, pay heed to its peer approval status and do rectify errors if any 😇",
-    9: "Once you've submitted a task and your proof of work has been reviewed, the next step is awarding of Karma Points!\n• ✅ - A green tick box means your task has been awarded Karma Points.\nAll tasks that have been appraised as shown above are automatically rewarded Karma Points ✨",
-    10: "Once your task has been verified and rewarded Karma Points, you'll be notified about the same in your Discord DM by our bot 💫\nmessage_id can be used to keep track of all the tasks for which you've earned Karma Points systematically!",
-    11: "What if I said you can earn Karma points just by chatting? μLearn now awards you Chat Karma for connecting with your peers in the respective text channel 🥳\nMaintain your streak and walk away with a daily bundle of Karma Points just by chatting!",
-    12: "Who does not like a bit a competition amongst their peers? Your Rank tells you how far you're ahead of your peers. Maximize your Karma mining and don't let the others topple you on your way to the leaderboard 🔥\nVisit the mention_channel channel and use the /rank command to see where you stand among your fellow learners!",
-    13: "Have any doubts regarding the task? Were your Karma Points not allotted properly? Is there any error in your rank? Facing any further other issue at μLearn Discord server? Worry not! We're always here to help 😌\nAll you got to do is raise a support ticket using the command /support-ticket in any of our text channels and our moderators will be in touch shortly to resolve all your current issues!",
-    14: "Need real-time help or support in our sever? Tag the Discord Moderator by selecting @Discord Moderator from the pop in any available text channel.\nWe'll make sure your issue gets resolved as soon as possible "
+    0: "Hey user,\nWelcome to the \"Intro to Discord\" task. Are you ready to explore our Discord server?\nType “Let’s go!” to move on!☺️",
+    1: "Hope your onboarding went smoothly. Our mention_channel channel is where we extend a warm welcome to new members of our community.",
+    2: "Make sure to read up on our rules! Check out mention_channel channel! After all, your learning space; our rules! 😁",
+    3: "Get the latest news and updates on your fav events at mention_channel! Keep your eyes and ears peeled for more news! 👀",
+    4: "Excited to start your career? It all starts at mention_channel! Get your hiring call today! 📢",
+    5: "Confused about what tasks you have to do? Visit the mention_channel channel for the complete rundown! ✨",
+    6: "Bring yourself to the spotlight at mention_channel! Introduce yourself and show ‘em what you got using the hashtag #ge-self-intro!",
+    7: "You submit projects, you get karma points! Simple as that! Rack up those karma points for greater rewards! 🤩\nWanna get your μID in an instant? Use the /get-muid command!\nCopy-paste that μID and reply with **#my-muid <μID>**\ne.g.: #my-muid name@mulearn",
+    8: "Your task submission happens here!\n🚩 **Red Flag** means there is an issue with the task submission and Discord mods will even point out the error!\n🏁 **Checkered Flag** means it’s all good! 😎🏁",
+    9: "Wanna know if a task has been awarded karma points? If the task got a “✅”, then it’s all good! 😎",
+    10: "message_id is where all karma alerts happen! You could even say it’s Karma Central! Track the flow of your karma points there! ✨",
+    11: "Don’t keep the rooms silent! Chat like there’s no tomorrow! You can earn upto 900 karma points per month😉",
+    12: "Want to know where you stand in the community? Check out mention_channel to know your rank!",
+    13: "Need technical support? We gotchu! Use /support-ticket command to get a support ticket and raise your issue!🤝",
+    14: "Need some help on a task or having trouble? We’re here to rescue the day! Type @Discord Moderators to ping a discord mod to take care of the matter!🔥"
 }
-
 
 class Flags(Enum):
     CHECKERED_FLAG = '🏁'
@@ -143,7 +142,8 @@ class IntroCog(Cog):
                     if channel.name == mention_channel_name:
                         break
                 await message.channel.send(step[order].replace("mention_channel", channel.mention))
-                await message.channel.send("NB: Please return back to intro channel")
+                if order == 1:
+                    await message.channel.send("Note: Remember to come back here to complete the full process after navigating through our server! 😅")
             elif order == 10:
                 lobby_messagge_id = self.intro_queries.fetch_lobby_message_id(message.author.id)
                 for channel in message.guild.channels:
@@ -157,12 +157,12 @@ class IntroCog(Cog):
 
     async def peer_approve(self, message):
         if not message.content.startswith("#my-muid"):
-            await message.channel.send("Please use hashtag")
+            await message.channel.send("Something ain’t right! Try again! 🥲")
             return False
         hashtag = message.content.split()[1] if len(message.content.split())>1 else None
         if hashtag is None or self.intro_queries.check_muid(message.author.id, hashtag) is None:
             await message.add_reaction(Flags.RED_FLAG.value)
-            await message.channel.send("Please submit your valid muid")
+            await message.channel.send("Something ain’t right! Try again! 🥲")
             return False
         await message.add_reaction(Flags.CHECKERED_FLAG.value)
         return True
