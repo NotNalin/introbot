@@ -32,11 +32,11 @@ class Role(Enum):
 step = {
     0: "Hey user,\nWelcome to the \"Intro to Discord\" task. Are you ready to explore our Discord server?\nType “Let’s go!” to move on!☺️",
     1: "Hope your onboarding went smoothly. Our mention_channel channel is where we extend a warm welcome to new members of our community.",
-    2: "Make sure to read up on our rules! Check out mention_channel channel! After all, your learning space; our rules! 😁",
+    2: "Make sure to read up our rules! Check out mention_channel channel! After all, your learning space; our rules! 😁",
     3: "Get the latest news and updates on your fav events at mention_channel! Keep your eyes and ears peeled for more news! 👀",
     4: "Excited to start your career? It all starts at mention_channel! Get your hiring call today! 📢",
     5: "Confused about what tasks you have to do? Visit the mention_channel channel for the complete rundown! ✨",
-    6: "Bring yourself to the spotlight at mention_channel! Introduce yourself and show ‘em what you got using the hashtag #ge-self-intro!",
+    6: "Bring yourself to the spotlight at mention_channel! Introduce yourself and show ‘em what you got using the hashtag **#ge-self-intro**",
     7: "You submit projects, you get karma points! Simple as that! Rack up those karma points for greater rewards! 🤩\nWanna get your μID in an instant? Use the /get-muid command!\nCopy-paste that μID and reply with **#my-muid <μID>**\ne.g.: #my-muid name@mulearn",
     8: "Your task submission happens here!\n🚩 **Red Flag** means there is an issue with the task submission and Discord mods will even point out the error!\n🏁 **Checkered Flag** means it’s all good! 😎🏁",
     9: "Wanna know if a task has been awarded karma points? If the task got a “✅”, then it’s all good! 😎",
