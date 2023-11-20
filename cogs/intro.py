@@ -117,7 +117,7 @@ class IntroCog(Cog):
                     return
             if order == 15:
                 await message.channel.send("You will recieve your certificate in dm")
-                await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {TASK_DROPBOX} channel with the hashtag **#ge-intro-to-discord** to avail 100 karma points')
+                await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {TASK_DROPBOX} channel with the hashtag **#ge-discord-guide** to avail 100 karma points')
                 await self.award_certificate(message)
                 self.intro_queries.delete_log(message.author.id)
                 await message.channel.delete()
