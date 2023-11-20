@@ -20,7 +20,7 @@ class IntroQueries:
         """
         params = {
             'discord_id': str(discord_id),
-            'hashtag': '#ge-intro-to-discord'
+            'hashtag': '#ge-discord-guide'
         }
         return self.db_connection.fetch_single_data(query, params)
 
