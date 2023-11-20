@@ -96,7 +96,7 @@ class IntroQueries:
 
     def check_muid(self, discord_id: int,muid) -> bool:
         query = """
-            SELECT TRUE FROM user WHERE discord_id = :discord_id AND mu_id = :muid;
+            SELECT TRUE FROM user WHERE discord_id = :discord_id AND muid = :muid;
         """
         params = {
             'discord_id': str(discord_id),
