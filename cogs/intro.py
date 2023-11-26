@@ -34,17 +34,18 @@ step = {
     1: "Hope your onboarding went smoothly. Our mention_channel channel is where we extend a warm welcome to new members of our community.",
     2: "Make sure to read up our rules! Check out mention_channel channel! After all, your learning space; our rules! 😁",
     3: "Get the latest news and updates on your fav events at mention_channel! Keep your eyes and ears peeled for more news! 👀",
-    4: "Excited to start your career? It all starts at mention_channel! Get your hiring call today! 📢",
-    5: "Confused about what tasks you have to do? Visit the mention_channel channel for the complete rundown! ✨",
-    6: "Bring yourself to the spotlight at mention_channel! Introduce yourself and show ‘em what you got using the hashtag **#ge-self-intro**",
-    7: "You submit projects, you get karma points! Simple as that! Rack up those karma points for greater rewards! 🤩\nWanna get your μID in an instant? Use the /get-muid command!\nCopy-paste that μID and reply with **#my-muid <μID>**\ne.g.: #my-muid name@mulearn",
-    8: "Your task submission happens here!\n🚩 **Red Flag** means there is an issue with the task submission and Discord mods will even point out the error!\n🏁 **Checkered Flag** means it’s all good! 😎🏁",
-    9: "Wanna know if a task has been awarded karma points? If the task got a “✅”, then it’s all good! 😎",
-    10: "message_id is where all karma alerts happen! You could even say it’s Karma Central! Track the flow of your karma points there! ✨",
-    11: "Don’t keep the rooms silent! Chat like there’s no tomorrow! You can earn upto 900 karma points per month😉",
-    12: "Want to know where you stand in the community? Check out mention_channel to know your rank!",
-    13: "Need technical support? We gotchu! Use /support-ticket command to get a support ticket and raise your issue!🤝",
-    14: "Need some help on a task or having trouble? We’re here to rescue the day! Type @Discord Moderators to ping a discord mod to take care of the matter!🔥"
+    4: "Stay in the loop with our latest events and unexpected surprises by following us on Instagram! Check out our profile at https://www.instagram.com/mulearn.official/ for updates.",
+    5: "Excited to start your career? It all starts at mention_channel! Get your hiring call today! 📢",
+    6: "Confused about what tasks you have to do? Visit the mention_channel channel for the complete rundown! ✨",
+    7: "Bring yourself to the spotlight at mention_channel! Introduce yourself and show ‘em what you got using the hashtag **#ge-self-intro**",
+    8: "You submit projects, you get karma points! Simple as that! Rack up those karma points for greater rewards! 🤩\nWanna get your μID in an instant? Use the /get-muid command!\nCopy-paste that μID and reply with **#my-muid <μID>**\ne.g.: #my-muid name@mulearn",
+    9: "Your task submission happens here!\n🚩 **Red Flag** means there is an issue with the task submission and Discord mods will even point out the error!\n🏁 **Checkered Flag** means it’s all good! 😎🏁",
+    10: "Wanna know if a task has been awarded karma points? If the task got a “✅”, then it’s all good! 😎",
+    11: "message_id is where all karma alerts happen! You could even say it’s Karma Central! Track the flow of your karma points there! ✨",
+    12: "Don’t keep the rooms silent! Chat like there’s no tomorrow! You can earn upto 900 karma points per month😉",
+    13: "Want to know where you stand in the community? Check out mention_channel to know your rank!",
+    14: "Need technical support? We gotchu! Use /support-ticket command to get a support ticket and raise your issue!🤝",
+    15: "Need some help on a task or having trouble? We’re here to rescue the day! Type @Discord Moderators to ping a discord mod to take care of the matter!🔥"
 }
 
 class Flags(Enum):
@@ -105,17 +106,17 @@ class IntroCog(Cog):
     async def check_msg(self, message):
         if self.intro_queries.is_valid_channel(message.channel.id, message.author.id):
             order = self.intro_queries.check_step_order(message.author.id)
-            if order == 7:
-                if self.intro_queries.is_muidtask_done(message.author.id):
-                    order = 11
             if order == 8:
+                if self.intro_queries.is_muidtask_done(message.author.id):
+                    order = 12
+            if order == 9:
                 if not await self.peer_approve(message):
                     return
-            if order == 9:
+            if order == 10:
                 task_message_id = self.intro_queries.fetch_task_message_id(message.author.id)
                 if not await self.appraiser_approval(message.channel, task_message_id):
                     return
-            if order == 15:
+            if order == 16:
                 await message.channel.send("You will recieve your certificate in dm")
                 await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {TASK_DROPBOX} channel with the hashtag **#ge-discord-guide** to avail 100 karma points')
                 await self.award_certificate(message)
@@ -129,22 +130,23 @@ class IntroCog(Cog):
                 mention_channel_name = "rules-and-readme"
             elif order == 3:
                 mention_channel_name = "announcements"
-            elif order == 4:
-                mention_channel_name = "career-labs"
             elif order == 5:
-                mention_channel_name = "lvl1-info"
+                mention_channel_name = "career-labs"
             elif order == 6:
+                mention_channel_name = "lvl1-info"
+            elif order == 7:
                 mention_channel_name = "self-introduction"
-            elif order == 12:
+            elif order == 13:
                 mention_channel_name = "know-your-rank"
             if mention_channel_name:
                 for channel in message.guild.channels:
                     if channel.name == mention_channel_name:
                         break
                 await message.channel.send(step[order].replace("mention_channel", channel.mention))
+                await message.channel.send(f"Type **done** to move on!")
                 if order == 1:
                     await message.channel.send("Note: Remember to come back here to complete the full process after navigating through our server! 😅")
-            elif order == 10:
+            elif order == 11:
                 lobby_messagge_id = self.intro_queries.fetch_lobby_message_id(message.author.id)
                 for channel in message.guild.channels:
                     if channel.name == 'karma-alerts':
