@@ -117,7 +117,7 @@ class IntroCog(Cog):
                 if not await self.appraiser_approval(message.channel, task_message_id):
                     return
             if order == 16:
-                await message.channel.send("You will recieve your certificate in dm")
+                await message.channel.send("Great news! You've successfully completed the task. Your certificate will be sent to you via direct message")
                 await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {TASK_DROPBOX} channel with the hashtag **#ge-discord-guide** to avail 100 karma points')
                 await self.award_certificate(message)
                 self.intro_queries.delete_log(message.author.id)
@@ -143,7 +143,6 @@ class IntroCog(Cog):
                     if channel.name == mention_channel_name:
                         break
                 await message.channel.send(step[order].replace("mention_channel", channel.mention))
-                await message.channel.send(f"Type **done** to move on!")
                 if order == 1:
                     await message.channel.send("Note: Remember to come back here to complete the full process after navigating through our server! 😅")
             elif order == 11:
@@ -155,16 +154,18 @@ class IntroCog(Cog):
                 await message.channel.send(step[order].replace("message_id", lobby_message.jump_url))
             else :
                 await message.channel.send(step[order])
+            if order != 8:
+                await message.channel.send(f"Type **done** to move on!")
             self.intro_queries.update_progress(message.author.id, order + 1)
 
     async def peer_approve(self, message):
         if not message.content.startswith("#my-muid"):
-            await message.channel.send("Something ain’t right! Try again! 🥲")
+            await message.channel.send("Please repost with correct hashtag 🥲")
             return False
         hashtag = message.content.split()[1] if len(message.content.split())>1 else None
         if hashtag is None or self.intro_queries.check_muid(message.author.id, hashtag) is None:
             await message.add_reaction(Flags.RED_FLAG.value)
-            await message.channel.send("Something ain’t right! Try again! 🥲")
+            await message.channel.send("Invalid muid. Please repost with correct muid 🥲")
             return False
         await message.add_reaction(Flags.CHECKERED_FLAG.value)
         return True
