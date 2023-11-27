@@ -72,7 +72,9 @@ class IntroCog(Cog):
             await interaction.response.send_message("You have already completed the intro task", ephemeral=True)
             return
         if self.intro_queries.is_intro_started(interaction.user.id):
-            await interaction.response.send_message("You have already started the intro task", ephemeral=True)
+            channel_id = self.intro_queries.fetch_channel_id(interaction.user.id)
+            channel = interaction.guild.get_channel(int(channel_id))
+            await interaction.response.send_message(f"You have already started the intro task. Please navigate to {channel.mention}", ephemeral=True)
             return
         guild = interaction.guild
         access_roles = [get(guild.roles, name=name) for name in Role.discord_managers()]
