@@ -43,7 +43,7 @@ step = {
     10: "Wanna know if a task has been awarded karma points? If the task got a “✅”, then it’s all good! 😎",
     11: "message_id is where all karma alerts happen! You could even say it’s Karma Central! Track the flow of your karma points there! ✨",
     12: "Don’t keep the rooms silent! Chat like there’s no tomorrow! You can earn upto 900 karma points per month😉",
-    13: "Want to know where you stand in the community? Check out mention_channel to know your rank!",
+    13: "Want to know where you stand in the community? Type **/rank** in mention_channel to know your rank!",
     14: "Need technical support? We gotchu! Use /support-ticket command to get a support ticket and raise your issue!🤝",
     15: "Need some help on a task or having trouble? We’re here to rescue the day! Type @Discord Moderators to ping a discord mod to take care of the matter!🔥"
 }
