@@ -43,7 +43,7 @@ step = {
     10: "Wanna know if a task has been awarded karma points? If the task got a “✅”, then it’s all good! 😎",
     11: "message_id is where all karma alerts happen! You could even say it’s Karma Central! Track the flow of your karma points there! ✨",
     12: "Don’t keep the rooms silent! Chat like there’s no tomorrow! You can earn upto 900 karma points per month😉",
-    13: "Want to know where you stand in the community? Check out mention_channel to know your rank!",
+    13: "Want to know where you stand in the community? Type **/rank** in mention_channel to know your rank!",
     14: "Need technical support? We gotchu! Use /support-ticket command to get a support ticket and raise your issue!🤝",
     15: "Need some help on a task or having trouble? We’re here to rescue the day! Type @Discord Moderators to ping a discord mod to take care of the matter!🔥"
 }
@@ -72,7 +72,9 @@ class IntroCog(Cog):
             await interaction.response.send_message("You have already completed the intro task", ephemeral=True)
             return
         if self.intro_queries.is_intro_started(interaction.user.id):
-            await interaction.response.send_message("You have already started the intro task", ephemeral=True)
+            channel_id = self.intro_queries.fetch_channel_id(interaction.user.id)
+            channel = interaction.guild.get_channel(int(channel_id))
+            await interaction.response.send_message(f"You have already started the intro task. Please navigate to {channel.mention}", ephemeral=True)
             return
         guild = interaction.guild
         access_roles = [get(guild.roles, name=name) for name in Role.discord_managers()]

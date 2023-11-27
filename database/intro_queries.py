@@ -49,6 +49,15 @@ class IntroQueries:
         }
         self.db_connection.execute(query, params)
 
+    def fetch_channel_id(self, discord_id: int) -> int:
+        query = """
+            SELECT channel_id FROM intro_task_log WHERE user_id = (SELECT id FROM user WHERE discord_id = :discord_id);
+        """
+        params = {
+            'discord_id': str(discord_id)
+        }
+        return self.db_connection.fetch_single_data(query, params)
+
     def fetch_user_id_from_discord_id(self, discord_id):
         query = """
             SELECT id FROM user WHERE discord_id = :discord_id;
