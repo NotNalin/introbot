@@ -67,6 +67,8 @@ class IntroCog(Cog):
     async def on_message(self, message):
         if message.author.bot:
             return
+        if not self.intro_queries.is_aaronchettan_up():
+            return message.reply("Aaronchettan is currently unavailable. Please try again later")
         await self.check_msg(message)
 
     @app_commands.command(name="intro", description="intro to mulearn")
