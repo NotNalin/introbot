@@ -1,7 +1,6 @@
 import discord
 from discord import app_commands
 from discord.ext.commands import Cog
-from discord import ui
 from enum import Enum
 from bot import CustomBot
 from database.intro_queries import IntroQueries
@@ -10,6 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import asyncio
 from decouple import config
+import random
 
 TASK_DROPBOX = config('TASK_DROPBOX')
 
@@ -67,9 +67,21 @@ class IntroCog(Cog):
     async def on_message(self, message):
         if message.author.bot:
             return
-        if not self.intro_queries.is_aaronchettan_up():
-            return message.reply("Aaronchettan is currently unavailable. Please try again later")
+        await self.aaronchettan_status(message)
         await self.check_msg(message)
+
+    async def aaronchettan_status(self, message):
+        if not self.intro_queries.is_aaronchettan_up():
+            s = [
+                "Aaronchettan is not here right now. In the meantime, try the typing challenge.",
+                "Aaronchettan has got to run some errands. He’ll be back by the time you follow our [Instagram](https://www.instagram.com/mulearn.official).",
+                "Aaronchettan is facing some issues right now. Mingle with your fellow learners while you wait.",
+                "Aaronchettan is currently unavailable, but hey when was the last time you checked your rank?",
+                "Aaronchettan is under maintenance. Feel free to check out the leaderboards!",
+                "Aaronchettan has some secret dealings. Check out our latest announcements.",
+                "Aaronchettan is busy right now, but try checking out some projects from the projects channel."
+            ]
+            return message.reply(random.choice(s))
 
     @app_commands.command(name="intro", description="intro to mulearn")
     async def intro(self, interaction: discord.Interaction):
