@@ -11,11 +11,12 @@ from io import BytesIO
 import asyncio
 from decouple import config
 
+TASK_DROPBOX = config('TASK_DROPBOX')
+
 
 def return_names(list_of_enums):
     return [name.value for name in list_of_enums]
 
-TASK_DROPBOX = config('TASK_DROPBOX')
 
 class Role(Enum):
     ADMIN = "Admins"
@@ -48,10 +49,12 @@ step = {
     15: "Need some help on a task or having trouble? We’re here to rescue the day! Type @Discord Moderators to ping a discord mod to take care of the matter!🔥"
 }
 
+
 class Flags(Enum):
     CHECKERED_FLAG = '🏁'
     RED_FLAG = '🚩'
     CHECKBOX = '✅'
+
 
 class IntroCog(Cog):
     """An example cog for adding an app command to the bot tree"""
@@ -64,18 +67,21 @@ class IntroCog(Cog):
     async def on_message(self, message):
         if message.author.bot:
             return
+        if not self.intro_queries.is_aaronchettan_up():
+            return message.reply("Aaronchettan is currently unavailable. Please try again later")
         await self.check_msg(message)
 
     @app_commands.command(name="intro", description="intro to mulearn")
     async def intro(self, interaction: discord.Interaction):
         if self.intro_queries.is_intro_done(interaction.user.id):
-            await interaction.response.send_message("You have already completed the intro task", ephemeral=True)
-            return
+            return await interaction.response.send_message("You have already completed the intro task", ephemeral=True)
+
         if self.intro_queries.is_intro_started(interaction.user.id):
             channel_id = self.intro_queries.fetch_channel_id(interaction.user.id)
             channel = interaction.guild.get_channel(int(channel_id))
-            await interaction.response.send_message(f"You have already started the intro task. Please navigate to {channel.mention}", ephemeral=True)
-            return
+            return await interaction.response.send_message(
+                f"You have already started the intro task. Please navigate to {channel.mention}", ephemeral=True)
+
         guild = interaction.guild
         access_roles = [get(guild.roles, name=name) for name in Role.discord_managers()]
         category = get(guild.categories, name="INTRO TO MULEARN")
@@ -99,72 +105,77 @@ class IntroCog(Cog):
         )
 
         self.intro_queries.insert_user(interaction.user.id, channel.id)
-        await interaction.response.send_message(f"Please navigate to {channel.mention} to complete the intro-task", ephemeral=True)
+        await interaction.response.send_message(f"Please navigate to {channel.mention} to complete the intro-task",
+                                                ephemeral=True)
         await channel.send(step[0].replace('user', interaction.user.mention))
         await asyncio.sleep(3600)
         self.intro_queries.delete_log(interaction.user.id)
         await channel.delete()
 
     async def check_msg(self, message):
-        if self.intro_queries.is_valid_channel(message.channel.id, message.author.id):
-            order = self.intro_queries.check_step_order(message.author.id)
-            if order == 8:
-                if self.intro_queries.is_muidtask_done(message.author.id):
-                    order = 12
-            if order == 9:
-                if not await self.peer_approve(message):
-                    return
-            if order == 10:
-                task_message_id = self.intro_queries.fetch_task_message_id(message.author.id)
-                if not await self.appraiser_approval(message.channel, task_message_id):
-                    return
-            if order == 16:
-                await message.channel.send("Great news! You've successfully completed the task. Your certificate will be sent to you via direct message")
-                await message.author.send(f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {TASK_DROPBOX} channel with the hashtag **#ge-discord-guide** to avail 100 karma points')
-                await self.award_certificate(message)
-                self.intro_queries.delete_log(message.author.id)
-                await message.channel.delete()
+        if not self.intro_queries.is_valid_channel(
+                message.channel.id, message.author.id
+        ):
+            return
+        order = self.intro_queries.check_step_order(message.author.id)
+        if order == 8 and self.intro_queries.is_muidtask_done(message.author.id):
+            order = 12
+        if order == 9 and not await self.peer_approve(message):
+            return
+        if order == 10:
+            task_message_id = self.intro_queries.fetch_task_message_id(message.author.id)
+            if not await self.appraiser_approval(message.channel, task_message_id):
                 return
-            mention_channel_name = None
+        if order == 16:
+            await message.channel.send(
+                "Great news! You've successfully completed the task. Your certificate will be sent to you via direct message")
+            await message.author.send(
+                f'You have successfully completed the intro task. Here is your certificate🎉. Please post the certificate in {TASK_DROPBOX} channel with the hashtag **#ge-discord-guide** to avail 100 karma points')
+            await self.award_certificate(message)
+            self.intro_queries.delete_log(message.author.id)
+            return await message.channel.delete()
+
+        mention_channel_name = None
+        if order == 1:
+            mention_channel_name = "welcome"
+        elif order == 13:
+            mention_channel_name = "know-your-rank"
+        elif order == 2:
+            mention_channel_name = "rules-and-readme"
+        elif order == 3:
+            mention_channel_name = "announcements"
+        elif order == 5:
+            mention_channel_name = "career-labs"
+        elif order == 6:
+            mention_channel_name = "lvl1-info"
+        elif order == 7:
+            mention_channel_name = "self-introduction"
+        if mention_channel_name:
+            for channel in message.guild.channels:
+                if channel.name == mention_channel_name:
+                    break
+            await message.channel.send(step[order].replace("mention_channel", channel.mention))
             if order == 1:
-                mention_channel_name = "welcome"
-            elif order == 2:
-                mention_channel_name = "rules-and-readme"
-            elif order == 3:
-                mention_channel_name = "announcements"
-            elif order == 5:
-                mention_channel_name = "career-labs"
-            elif order == 6:
-                mention_channel_name = "lvl1-info"
-            elif order == 7:
-                mention_channel_name = "self-introduction"
-            elif order == 13:
-                mention_channel_name = "know-your-rank"
-            if mention_channel_name:
-                for channel in message.guild.channels:
-                    if channel.name == mention_channel_name:
-                        break
-                await message.channel.send(step[order].replace("mention_channel", channel.mention))
-                if order == 1:
-                    await message.channel.send("Note: Remember to come back here to complete the full process after navigating through our server! 😅")
-            elif order == 11:
-                lobby_messagge_id = self.intro_queries.fetch_lobby_message_id(message.author.id)
-                for channel in message.guild.channels:
-                    if channel.name == 'karma-alerts':
-                        break
-                lobby_message = await channel.fetch_message(lobby_messagge_id)
-                await message.channel.send(step[order].replace("message_id", lobby_message.jump_url))
-            else :
-                await message.channel.send(step[order])
-            if order != 8:
-                await message.channel.send(f"Type **done** to move on!")
-            self.intro_queries.update_progress(message.author.id, order + 1)
+                await message.channel.send(
+                    "Note: Remember to come back here to complete the full process after navigating through our server! 😅")
+        elif order == 11:
+            lobby_message_id = self.intro_queries.fetch_lobby_message_id(message.author.id)
+            for channel in message.guild.channels:
+                if channel.name == 'karma-alerts':
+                    break
+            lobby_message = await channel.fetch_message(lobby_message_id)
+            await message.channel.send(step[order].replace("message_id", lobby_message.jump_url))
+        else:
+            await message.channel.send(step[order])
+        if order != 8:
+            await message.channel.send("Type **done** to move on!")
+        self.intro_queries.update_progress(message.author.id, order + 1)
 
     async def peer_approve(self, message):
         if not message.content.startswith("#my-muid"):
             await message.channel.send("Please repost with correct hashtag 🥲")
             return False
-        hashtag = message.content.split()[1] if len(message.content.split())>1 else None
+        hashtag = message.content.split()[1] if len(message.content.split()) > 1 else None
         if hashtag is None or self.intro_queries.check_muid(message.author.id, hashtag) is None:
             await message.add_reaction(Flags.RED_FLAG.value)
             await message.channel.send("Invalid muid. Please repost with correct muid 🥲")
@@ -189,11 +200,12 @@ class IntroCog(Cog):
         font_bigger = ImageFont.truetype("assets/fonts/Poppins-SemiBold.ttf", 100)
         background = Image.open(bg_image_path)
         draw = ImageDraw.Draw(background)
-        draw.text((150, 900), name, fill=color_white,font=font_bigger, align="center")
+        draw.text((150, 900), name, fill=color_white, font=font_bigger, align="center")
         out = BytesIO()
         background.save(out, format="PNG")
         out.seek(0)
         await message.author.send(file=discord.File(out, filename="certificate.png"))
+
 
 async def setup(bot: CustomBot) -> None:
     """Add the Example cog to the bot tree"""

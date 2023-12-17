@@ -1,12 +1,13 @@
 from uuid import uuid4
 from datetime import datetime
 
+
 class IntroQueries:
 
     def __init__(self, db_connection):
         self.db_connection = db_connection
 
-    def format_time(self,date_time):
+    def format_time(self, date_time):
         formated_time = date_time.strftime("%Y-%m-%d %H:%M:%S")
         return datetime.strptime(formated_time, "%Y-%m-%d %H:%M:%S")
 
@@ -103,7 +104,7 @@ class IntroQueries:
         }
         return self.db_connection.fetch_single_data(query, params)
 
-    def check_muid(self, discord_id: int,muid) -> bool:
+    def check_muid(self, discord_id: int, muid) -> bool:
         query = """
             SELECT TRUE FROM user WHERE discord_id = :discord_id AND muid = :muid;
         """
@@ -113,7 +114,7 @@ class IntroQueries:
         }
         return self.db_connection.fetch_single_data(query, params)
 
-    def update_progress(self,user_id: int, progress: int) -> None:
+    def update_progress(self, user_id: int, progress: int) -> None:
         query = """
             UPDATE intro_task_log 
             SET progress = :progress, updated_by = (SELECT id FROM user WHERE discord_id = :discord_id), updated_at = :updated_at
@@ -160,3 +161,10 @@ class IntroQueries:
             'hashtag': '#my-muid'
         }
         return self.db_connection.fetch_single_data(query, params)
+
+    def is_aaronchettan_up(self):
+        query = """
+            SELECT TRUE FROM system_setting 
+            WHERE `key` = 'under_maintenance' AND `value` = '1';
+        """
+        return self.db_connection.fetch_one(query)
