@@ -95,6 +95,9 @@ class IntroCog(Cog):
                 f"You have already started the intro task. Please navigate to {channel.mention}", ephemeral=True)
 
         guild = interaction.guild
+        if not guild:
+            return await interaction.response.send_message("This command cannot be used in DMs. Please use this command here https://discord.com/channels/771670169691881483/789476711867088967")
+            
         access_roles = [get(guild.roles, name=name) for name in Role.discord_managers()]
         category = get(guild.categories, name="INTRO TO MULEARN")
         if category is None:
